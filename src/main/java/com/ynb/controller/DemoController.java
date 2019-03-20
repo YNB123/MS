@@ -1,6 +1,8 @@
 package com.ynb.controller;
 
 import com.ynb.domain.User;
+import com.ynb.redis.RedisService;
+import com.ynb.redis.UserKey;
 import com.ynb.result.CodeMsg;
 import com.ynb.result.Result;
 import com.ynb.service.UserService;
@@ -20,6 +22,8 @@ public class DemoController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    RedisService redisService;
 
     @RequestMapping("/hello")
     @ResponseBody
@@ -47,11 +51,33 @@ public class DemoController {
     }
 
     @RequestMapping("/db/get")
+    @ResponseBody
     public String getUser(Model model) {
         User user= userService.getById(1);
         model.addAttribute("name",user.getName());
         return "thymeleaf";
     }
+
+//    @RequestMapping("/redis/get")
+//    @ResponseBody
+//    public Result<String> redisGet(Model model) {
+//        //Long v1 =redisService.get("key1",Long.class);
+//        redisService.set("123""UUU","222");
+//        String v2 =redisService.get("UUU",String.class);
+//        return Result.success(v2);
+//    }
+
+    @RequestMapping("/redis/set")
+    @ResponseBody
+    public Result<Boolean> redisSet(Model model) {
+        User user = new User();
+        user.setId(2);
+        user.setName("李密");
+        user.setSex("男");
+        redisService.set(UserKey.getById,""+2,user);
+        return Result.success(true);
+    }
+
 
 }
 
